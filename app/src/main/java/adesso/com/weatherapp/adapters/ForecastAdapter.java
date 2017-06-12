@@ -1,105 +1,201 @@
 package adesso.com.weatherapp.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.google.android.gms.location.DetectedActivity;
+
+import java.io.InputStream;
 
 import adesso.com.weatherapp.R;
+import adesso.com.weatherapp.activities.MainActivity;
+import adesso.com.weatherapp.activities.WeatherDetailActivity;
 import adesso.com.weatherapp.models.WeatherModel;
 import adesso.com.weatherapp.realm.RealmController;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by macapple on 07/06/2017.
  */
 
-public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder> {
+//public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapterViewHolder> {
+public class ForecastAdapter extends RealmRecyclerViewAdapter<WeatherModel> {
 
-    private WeatherModel[] mWeatherData;
-
-    final private ForecastAdapterOnClickHandler mClickHandler;
-
+    final Context context;
     private Realm realm;
+    private LayoutInflater inflater;
 
-    public interface ForecastAdapterOnClickHandler {
-        void onClick(WeatherModel weatherForDay);
+    public ForecastAdapter(Context context) {
+
+        this.context = context;
     }
 
-
-    public ForecastAdapter(ForecastAdapterOnClickHandler clickHandler) {
-        mClickHandler = clickHandler;
-    }
-
-
-    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        public final TextView mCityTextView;
-        public final TextView mTemperatureTextView;
-
-        public final ImageView mWeatherIconImageView;
-
-        public ForecastAdapterViewHolder(View view) {
-
-            super(view);
-
-            mCityTextView = (TextView) view.findViewById(R.id.tv_city_name);
-            mTemperatureTextView = (TextView) view.findViewById(R.id.tv_temperature);
-
-            mWeatherIconImageView = (ImageView) view.findViewById(R.id.iv_weather_icon);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            WeatherModel weatherForDay = mWeatherData[adapterPosition];
-            mClickHandler.onClick(weatherForDay);
-        }
-    }
-
+    // create new views (invoked by the layout manager)
     @Override
-    public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        int layoutIdForListItem = R.layout.forecast_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
-
-        View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
-        return new ForecastAdapterViewHolder(view);
+    public ForecastViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // inflate a new card view
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.forecast_list_item, parent, false);
+        return new ForecastViewHolder(view);
     }
 
+    // replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ForecastAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
 
-        //realm = RealmController.getInstance().getRealm();
+        realm = RealmController.getInstance().getRealm();
 
-        WeatherModel weatherForThisDay = mWeatherData[position];
+        // get the article
+        final WeatherModel weatherModel = getItem(position);
+        // cast the generic view holder to our specific one
+        final ForecastViewHolder holder = (ForecastViewHolder) viewHolder;
 
-        holder.mCityTextView.setText(weatherForThisDay.getCityName());
-        holder.mTemperatureTextView.setText(weatherForThisDay.getTemperature());
+        // set the title and the snippet
+        holder.textCityName.setText(weatherModel.getCityName());
+        holder.textTemperature.setText(weatherModel.getTemperature());
 
-        /*try {
-            Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(weatherForThisDay.getWeatherIconUrl().toString()).getContent());
-            holder.mWeatherIconImageView.setImageBitmap(bitmap);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        //holder.imageWeatherIcon.setImageIcon(weatherModel.getWeatherIconUrl());
+        if (weatherModel.getWeatherIconUrl() != null) {
+            new DownloadImageTask(holder.imageWeatherIcon).execute("https://openweathermap.org/img/w/" + weatherModel.getWeatherIconUrl() + ".png");
+        }
+        // load the background image
+        /*if (book.getImageUrl() != null) {
+            Glide.with(context)
+                    .load(book.getImageUrl().replace("https", "http"))
+                    .asBitmap()
+                    .fitCenter()
+                    .into(holder.imageBackground);
         }*/
+
+        //remove single match from realm
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View content = inflater.inflate(R.layout.alert_dialog, null);
+                final TextView errorMessage = (TextView) content.findViewById(R.id.delete_alert_text);
+                errorMessage.setText(R.string.delete_alert_message);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setView(content)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                RealmResults<WeatherModel> results = realm.where(WeatherModel.class).findAll();
+
+                                // Get the book title to show it in toast message
+                                WeatherModel w = results.get(position);
+                                String cityName = w.getCityName();
+
+                                // All changes to data must happen in a transaction
+                                realm.beginTransaction();
+
+                                // remove single match
+                                results.remove(position);
+                                realm.commitTransaction();
+
+                                notifyDataSetChanged();
+
+                                Toast.makeText(context, cityName + " is removed from the bookmarks", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                return false;
+            }
+        });
+
+        //open single match from realm
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Intent showDetailActivityIntent = new Intent(context, WeatherDetailActivity.class);
+
+                showDetailActivityIntent.putExtra("DETAIL_EXTRA_LAT", Double.parseDouble(weatherModel.getLat()));
+                showDetailActivityIntent.putExtra("DETAIL_EXTRA_LON", Double.parseDouble(weatherModel.getLon()));
+
+                context.startActivity(showDetailActivityIntent);
+            }
+        });
     }
 
-    @Override
+    // return the size of your data set (invoked by the layout manager)
     public int getItemCount() {
-        if (mWeatherData == null) return 0;
-        return mWeatherData.length;
+
+        if (getRealmAdapter() != null) {
+            return getRealmAdapter().getCount();
+        }
+        return 0;
     }
 
-    public void setWeatherData(WeatherModel[] WeatherData) {
-        mWeatherData = WeatherData;
-        notifyDataSetChanged();
+    public static class ForecastViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView textTemperature;
+        public TextView textCityName;
+        public ImageView imageWeatherIcon;
+
+        public ForecastViewHolder(View itemView) {
+            // standard view holder pattern with Butterknife view injection
+            super(itemView);
+
+            textCityName = (TextView) itemView.findViewById(R.id.tv_city_name);
+            textTemperature = (TextView) itemView.findViewById(R.id.tv_temperature);
+            imageWeatherIcon = (ImageView) itemView.findViewById(R.id.iv_weather_icon);
+        }
+
+    }
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }

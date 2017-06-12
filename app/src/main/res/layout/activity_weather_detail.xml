@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="adesso.com.weatherapp.activities.WeatherDetailActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_weight="4">
+        <TextView
+            android:id="@+id/tv_detail_city_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:id="@+id/tv_detail_current_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:layout_marginTop="5dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_detail_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:textSize="60sp"
+                android:textColor="#000"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+            <ImageView
+                android:id="@+id/iv_detail_weather_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_toStartOf="@id/tv_detail_temperature"
+                android:layout_toLeftOf="@id/tv_detail_temperature"
+                android:layout_centerVertical="true"
+                android:contentDescription="Weather Icon"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingLeft="30dp">
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/humidity_icon"
+                android:contentDescription="Humidity Icon"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_detail_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="#000"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/rain_icon"
+                android:contentDescription="Rain Icon"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_detail_rain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="#000"
+                android:text="0"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/wind_icon"
+                android:contentDescription="Wind Icon"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_detail_wind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="#000"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5">
+
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

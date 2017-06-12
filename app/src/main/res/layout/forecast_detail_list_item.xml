@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/iv_detail_item_weather_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="Weather Icon"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tv_detail_item_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="#000"
+        android:layout_weight="1"
+        android:paddingLeft="10dp"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/humidity_icon"
+        android:contentDescription="Humidity Icon"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tv_detail_item_humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000"
+        android:layout_weight="1"
+        android:paddingLeft="10dp"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rain_icon"
+        android:contentDescription="Rain Icon"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tv_detail_item_rain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000"
+        android:text="0"
+        android:layout_weight="1"
+        android:paddingLeft="10dp"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/wind_icon"
+        android:contentDescription="Wind Icon"
+        android:layout_weight="1"/>
+
+    <TextView
+        android:id="@+id/tv_detail_item_wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000"
+        android:layout_weight="1"
+        android:paddingLeft="10dp"/>
+</LinearLayout>

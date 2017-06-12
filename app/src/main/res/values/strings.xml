@@ -12,4 +12,9 @@
 
     <!-- For labelling tomorrow's forecast [CHAR LIMIT=15] -->
     <string name="tomorrow">Tomorrow</string>
+
+    <string name="google_maps_api_key">AIzaSyA_SsCVJb8UmtvVYRR31eQM2ZLFC4rOJs0</string>
+    <string name="add_bookmark">Add Bookmark</string>
+    <string name="btn_text_cancel">Cancel</string>
+    <string name="delete_alert_message">Are you sure you want to delete this item?</string>
 </resources>

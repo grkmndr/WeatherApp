@@ -1,53 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="adesso.com.weatherapp.activities.MainActivity"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/forecast_view"
+        android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:background="@color/colorGray">
-            <TextView
-                android:id="@+id/tv_current_city_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+            android:layout_height="match_parent"
+            tools:context="adesso.com.weatherapp.activities.MainActivity"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/forecast_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:background="@color/colorGray">
+                <TextView
+                    android:id="@+id/tv_current_city_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="40dp"
+                    android:textSize="16sp"
+                    android:textColor="#000"/>
+                <TextView
+                    android:id="@+id/tv_current_city_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="40dp"
+                    android:textSize="60sp"
+                    android:textColor="#000"/>
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/bookmark_recycler_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
                 android:paddingTop="40dp"
-                android:textSize="16sp"
-                android:textColor="#000"/>
-            <TextView
-                android:id="@+id/tv_current_city_temperature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:paddingBottom="40dp"
-                android:textSize="60sp"
-                android:textColor="#000"/>
-        </RelativeLayout>
+                android:background="@drawable/home_tableview_background">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bookmark_recycler_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
-            android:paddingTop="40dp"
-            android:background="@drawable/home_tableview_background">
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
 
-        </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_bookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:layout_anchor="@id/forecast_view"
+            app:layout_anchorGravity="bottom|right|end"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_add_black_24dp"
+            android:tint="@color/colorGray"
+            app:backgroundTint="@android:color/holo_red_light" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <TextView
         android:id="@+id/tv_error_message_display"
